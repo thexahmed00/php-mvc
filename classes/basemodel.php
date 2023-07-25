@@ -9,12 +9,13 @@
 class BaseModel {
     
     protected $viewModel;
+    protected $db;
 
     //create the base and utility objects available to all models on model creation
-    public function __construct()
+    public function __construct($db=null)
     {
         $this->viewModel = new ViewModel();
-		
+		$this->db = $db;
 		$this->commonViewData();
     }
 	

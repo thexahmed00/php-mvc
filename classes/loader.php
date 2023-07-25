@@ -12,14 +12,15 @@ class Loader {
     private $controllerClass;
     private $action;
     private $urlValues;
-    
+    private $db;
+
     //store the URL request values on object creation
     public function __construct() {
         $this->urlValues = $_GET;
         
         if ($this->urlValues['controller'] == "") {
-            $this->controllerName = "home";
-            $this->controllerClass = "HomeController";
+            $this->controllerName = "todocontroller";
+            $this->controllerClass = "TodoController";
         } else {
             $this->controllerName = strtolower($this->urlValues['controller']);
             $this->controllerClass = ucfirst(strtolower($this->urlValues['controller'])) . "Controller";
@@ -29,6 +30,10 @@ class Loader {
             $this->action = "index";
         } else {
             $this->action = $this->urlValues['action'];
+        }
+        $this->db=new mysqli("localhost","root","root","php");
+        if($this->db->connect_errno){
+            echo "Failed to connect to MySQL: (" . $this->db->connect_errno . ") " . $this->db->connect_error;
         }
     }
                   
@@ -51,7 +56,7 @@ class Loader {
                 //does the requested class contain the requested action as a method?
                 if (method_exists($this->controllerClass,$this->action))
                 {
-                    return new $this->controllerClass($this->action,$this->urlValues);
+                    return new $this->controllerClass($this->action,$this->urlValues,$this->db);
                 } else {
                     //bad action/method error
                     require("controllers/error.php");
